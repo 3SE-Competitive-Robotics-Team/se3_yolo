@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Local datasets and training outputs
+/datasets/
+/runs/
+
+# Model artifacts
+*.pt
+*.onnx
+*.engine
+*.mlpackage

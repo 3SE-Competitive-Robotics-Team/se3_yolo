@@ -1,0 +1,6 @@
+path: datasets/energy_mechanism
+train: images/train
+val: images/val
+
+names:
+  0: energy_mechanism
