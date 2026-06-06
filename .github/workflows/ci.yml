@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  ci:
+    # 仅当 push 事件、信任作者的 PR、或有 ci-approved 标签的 PR 时运行
+    if: |
+      github.event_name == 'push' ||
+      contains(fromJSON('["XiaoPengYouCode","am345"]'), github.event.pull_request.user.login) ||
+      contains(github.event.pull_request.labels.*.name, 'ci-approved')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.13"
+
+      - name: 缓存 ruff
+        uses: actions/cache@v4
+        with:
+          path: .ruff_cache
+          key: ruff-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+
+      - name: 安装依赖
+        run: uv sync
+
+      - name: Format 检查
+        run: uv run ruff format . --check
+
+      - name: Lint 检查
+        run: uv run ruff check .
