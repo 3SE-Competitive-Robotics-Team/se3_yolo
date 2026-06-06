@@ -14,11 +14,12 @@ uv sync
 se3-yolo/
 ├── configs/
 │   ├── armor/
-│   │   └── data.yaml
+│   │   ├── data.yaml           # 训练数据集配置
+│   │   └── export.yaml         # ONNX 导出配置
 │   ├── energy_mechanism/
-│   │   └── data.yaml
+│   │   └── ...
 │   └── robot/
-│       └── data.yaml
+│       └── ...
 ├── datasets/
 │   ├── armor/
 │   │   ├── images/
@@ -28,28 +29,17 @@ se3-yolo/
 │   │       ├── train/
 │   │       └── val/
 │   ├── energy_mechanism/
-│   │   ├── images/
-│   │   │   ├── train/
-│   │   │   └── val/
-│   │   └── labels/
-│   │       ├── train/
-│   │       └── val/
+│   │   └── ...
 │   └── robot/
-│       ├── images/
-│       │   ├── train/
-│       │   └── val/
-│       └── labels/
-│           ├── train/
-│           └── val/
+│       └── ...
 ├── runs/
 │   ├── armor/
 │   ├── energy_mechanism/
 │   └── robot/
+├── prek.toml                   # pre-commit hooks
 ├── pyproject.toml
 └── README.md
 ```
-
-每个目标（armor / energy_mechanism / robot）都有独立的配置文件、数据集和训练输出目录。
 
 ## 数据集
 
@@ -86,6 +76,26 @@ uv run yolo detect val model=runs/robot/yolo26n/weights/best.pt data=configs/rob
 ```bash
 uv run yolo detect predict model=runs/robot/yolo26n/weights/best.pt source=datasets/robot/images/val
 ```
+
+## 导出 ONNX
+
+训练完成后，使用 export 配置文件导出 ONNX 模型用于推理部署：
+
+```bash
+yolo export cfg=configs/<target>/export.yaml
+```
+
+导出配置（`configs/<target>/export.yaml`）：
+
+```yaml
+model: runs/armor/weights/best.pt
+format: onnx
+imgsz: 640
+simplify: true
+opset: 12
+```
+
+生成的 `.onnx` 文件可直接用 ONNX Runtime 加载推理。
 
 ## 环境检查
 

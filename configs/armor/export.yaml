@@ -1,0 +1,5 @@
+model: runs/armor/weights/best.pt
+format: onnx
+imgsz: 640
+simplify: true
+opset: 12
